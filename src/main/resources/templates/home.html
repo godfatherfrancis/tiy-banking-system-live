@@ -4,6 +4,10 @@
     </head>
 <body>
 
+    <p>{{myErrorMessage}}
+
+    </p>
+
     <div class="welcomebanner">
         {{#name}}
         <h1>Hello, {{.}}!</h1>
@@ -47,10 +51,9 @@
     <form action="/create-bank" method="post">
         <input type="text" placeholder="Enter Bank Name" name="bankName"/>
         <input type="text" placeholder="Enter Bank Address" name="bankAddress"/>
-
         <button type="submit">Create Bank</button>
+
+
     </form>
-
-
 </body>
 </html>

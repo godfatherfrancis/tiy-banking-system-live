@@ -21,16 +21,25 @@ public class BankSystemController {
         setCommonAttributes(session, model);
         model.addAttribute("bankList", Bank.retrieveAllBanks());
 
+        model.addAttribute("myErrorMessage", "this is an error message in");
         return "home";
     }
 
     @RequestMapping(path = "/customerList", method = RequestMethod.GET)
     public String getCustomerList(HttpSession session, Model model, String bankID) {
         setCommonAttributes(session, model);
-        Bank bank = Bank.retrieve(bankID);
-        model.addAttribute("bank", bank);
-        System.out.println("There are " + bank.getBankCustomers().size() + " customers in the current bank");
-        model.addAttribute("customerList", bank.getBankCustomers().values());
+
+
+
+        if (bankID == null || bankID.isEmpty()) {
+            model.addAttribute("myErrorMessage", "unknown bankID");
+        } else {
+            Bank bank = Bank.retrieve(bankID);
+            model.addAttribute("bank", bank);
+            System.out.println("There are " + bank.getBankCustomers().size() + " customers in the current bank");
+            model.addAttribute("customerList", bank.getBankCustomers().values());
+        }
+
         return "customerList";
     }
 
@@ -89,12 +98,15 @@ public class BankSystemController {
         System.out.println("createCustomer()");
         setCommonAttributes(session, model);
         Bank bank = Bank.retrieve(bankID);
+        if (firstName.equals("") && lastName.equals("") && emailAddress.equals("")) {
+            System.out.println("============creating empty customer===============");
 
-        Customer customer = new Customer(firstName, lastName, emailAddress);
-        bank.addCustomer(customer);
+        } else {
+            Customer customer = new Customer(firstName, lastName, emailAddress);
+            bank.addCustomer(customer);
 
-        bank.save();
-
+            bank.save();
+        }
         return "redirect:/customerList?bankID=" + bankID;
     }
 
@@ -142,8 +154,12 @@ public class BankSystemController {
         System.out.println("createBank()");
         setCommonAttributes(session, model);
 
-        Bank newBank = new Bank(bankName, bankAddress);
-        newBank.save();
+        if (bankName.equals("") && bankAddress.equals("")) {
+            System.out.println("============creating empty bank===============");
+        } else {
+            Bank newBank = new Bank(bankName, bankAddress);
+            newBank.save();
+        }
 
         return "redirect:/";
     }
